@@ -1,0 +1,1 @@
+INSERT INTO todos (title, completed, user_id, description) VALUES ('test todo', false, 2, 'testing migrations');

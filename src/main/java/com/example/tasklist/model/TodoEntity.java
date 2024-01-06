@@ -27,6 +27,8 @@ public class TodoEntity {
     private Long id;
     private String title;
     private Boolean completed;
+    //новое поле, добавленное при миграции V0_1_1__ADD_DESC_COLUMN
+    private String description;
 
     // настраиваем связь многие-к-одному с таблицей users
     // внешним ключом будет выступать колонка user_id
