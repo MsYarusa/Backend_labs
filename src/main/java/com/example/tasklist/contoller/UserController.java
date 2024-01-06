@@ -1,11 +1,13 @@
 package com.example.tasklist.contoller;
 
+import com.example.tasklist.dto.ErrorDTO;
 import com.example.tasklist.dto.UserWithoutPasswordDTO;
 import com.example.tasklist.exception.UserAlreadyExistException;
 import com.example.tasklist.exception.UserNotFoundException;
 import com.example.tasklist.model.UserEntity;
 import com.example.tasklist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,5 +78,29 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
+    }
+
+    //эмулируем ошибку на get запрос
+    @GetMapping("/error")
+    public ResponseEntity<?> errorGetMethod() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при GET запросе"));
+    }
+
+    //эмулируем ошибку на post запрос
+    @PostMapping("/error")
+    public ResponseEntity<?> errorPostMethod() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при POST запросе"));
+    }
+
+    //эмулируем ошибку на put запрос
+    @PutMapping("/error")
+    public ResponseEntity<?> errorPutMethod() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при PUT запросе"));
+    }
+
+    //эмулируем ошибку на delete запрос
+    @DeleteMapping("/error")
+    public ResponseEntity<?> errorDeleteMethod() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при DELETE запросе"));
     }
 }

@@ -1,15 +1,15 @@
 CREATE TABLE users
 (
     id       BIGINT      NOT NULL AUTO_INCREMENT,
-    password varchar(64) not null,
-    username varchar(64) not null unique,
+    password VARCHAR(64) NOT NULL,
+    username VARCHAR(64) NOT NULL UNIQUE,
     PRIMARY KEY (id)
-) engine=MyISAM;
+);
 
 CREATE TABLE todos
 (
     id       BIGINT      NOT NULL AUTO_INCREMENT,
-    title varchar(64) not null,
+    title VARCHAR(64) NOT NULL,
     completed boolean NOT NULL,
     PRIMARY KEY (id)
-) engine=MyISAM;
+);
