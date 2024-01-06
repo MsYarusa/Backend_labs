@@ -1,6 +1,7 @@
 package com.example.tasklist.service;
 
 import com.example.tasklist.dto.TodoWithoutUserDTO;
+import com.example.tasklist.exception.FieldIsNullException;
 import com.example.tasklist.exception.TodoNotFoundException;
 import com.example.tasklist.exception.UserNotFoundException;
 import com.example.tasklist.model.TodoEntity;
@@ -25,12 +26,20 @@ public class TodoService {
     private ModelMapper modelMapper;
 
     //сервис обработки post запроса для задач
-    public TodoWithoutUserDTO createTodo(TodoEntity todo, Long userId) throws UserNotFoundException {
+    public TodoWithoutUserDTO createTodo(TodoEntity todo, Long userId) throws UserNotFoundException, FieldIsNullException {
         //ищем запись о пользователе в таблице по айди
         Optional<UserEntity> row = userRepo.findById(userId);
         //если записи нет, то бросаем исключение
         if(row.isEmpty()){
             throw new UserNotFoundException("Пользователь не найден");
+        }
+
+        if (todo.getCompleted() == null){
+            throw new FieldIsNullException("Статус задачи не указан");
+        }
+
+        if (todo.getTitle() == null){
+            throw new FieldIsNullException("Название задачи не указано");
         }
         //связываем задачу и пользователя
         UserEntity user = row.get();

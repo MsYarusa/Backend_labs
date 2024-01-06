@@ -8,6 +8,6 @@ AllArgsConstructor создает конструктор со всеми пол�
  */
 @Getter
 @AllArgsConstructor
-public class ErrorDTO {
-    private String message;
+public class ErrorResponseDTO {
+    private ErrorDTO error;
 }

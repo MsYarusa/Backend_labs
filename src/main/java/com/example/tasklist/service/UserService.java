@@ -48,10 +48,16 @@ public class UserService {
     }
 
     //сервис регистрации
-    public UserWithoutPasswordDTO registerUser(UserEntity user) throws UserAlreadyExistException {
+    public UserWithoutPasswordDTO registerUser(UserEntity user) throws UserAlreadyExistException, FieldIsNullException {
         // проверяем есть ли уже пользователь с указанным именем
         if(userRepo.findByUsername(user.getUsername()) != null){
             throw new UserAlreadyExistException("Пользователь с таким именем существует");
+        }
+        if (user.getUsername() == null){
+            throw new FieldIsNullException("Имя пользователя не указано");
+        }
+        if (user.getPassword() == null){
+            throw new FieldIsNullException("Пароль не указан");
         }
         return modelMapper.map(userRepo.save(user), UserWithoutPasswordDTO.class);
     }

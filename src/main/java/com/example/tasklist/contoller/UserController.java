@@ -1,20 +1,22 @@
 package com.example.tasklist.contoller;
 
-import com.example.tasklist.dto.ErrorDTO;
 import com.example.tasklist.dto.UserWithoutPasswordDTO;
+import com.example.tasklist.exception.ApiControllerExceptionHandler;
+import com.example.tasklist.exception.FieldIsNullException;
 import com.example.tasklist.exception.UserAlreadyExistException;
 import com.example.tasklist.exception.UserNotFoundException;
 import com.example.tasklist.model.UserEntity;
 import com.example.tasklist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 //контроллер для пользователей
 //контроллер связан с доменом "api/users"
+//ошибки вызванные в контроллере обрабатываются во внешнем классе
 @RestController
 @RequestMapping("api/users")
+@ApiControllerExceptionHandler
 public class UserController {
     // подключаем сервис, отвечающий за обработку запросов, связанных с пользователями
     @Autowired
@@ -23,84 +25,36 @@ public class UserController {
     //get запрос на получение пользователя по айдишнику
     //ожидает получить айдишник пользователя в query параметрах
     @GetMapping
-    public ResponseEntity<?> getUser(@RequestParam Long id) {
-        try {
+    public ResponseEntity<?> getUser(@RequestParam Long id) throws UserNotFoundException {
             return ResponseEntity.ok(userService.getUser(id));
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Произошла ошибка");
-        }
     }
 
     //get запрос на всех пользователей
     //связан с доменом "/all"
     @GetMapping("/all")
     public ResponseEntity<?> getUser() {
-        try {
-            return ResponseEntity.ok(userService.getAllUser());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Произошла ошибка");
-        }
+        return ResponseEntity.ok(userService.getAllUser());
     }
 
     //post запрос на регистрацию нового пользователя
     //ожидает получить нового пользователя в теле
 
     @PostMapping
-    public ResponseEntity<?> postUser(@RequestBody UserEntity user) {
-        try {
-            return ResponseEntity.ok(userService.registerUser(user));
-        } catch (UserAlreadyExistException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Произошла ошибка");
-        }
+    public ResponseEntity<?> postUser(@RequestBody UserEntity user) throws UserAlreadyExistException, FieldIsNullException {
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
     //put запрос на обновление имени пользователя
     //ожидается получить айдишник пользователя в виде переменной пути
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserWithoutPasswordDTO user) {
-        try {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserWithoutPasswordDTO user) throws UserNotFoundException, FieldIsNullException {
             return ResponseEntity.ok(userService.updateUser(id, user));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Произошла ошибка");
-        }
     }
 
     //delete запрос на удаление пользователя
     //ожидается получить айдишник пользователя в виде переменной пути
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
             return ResponseEntity.ok(userService.deleteUser(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Произошла ошибка");
-        }
-    }
-
-    //эмулируем ошибку на get запрос
-    @GetMapping("/error")
-    public ResponseEntity<?> errorGetMethod() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при GET запросе"));
-    }
-
-    //эмулируем ошибку на post запрос
-    @PostMapping("/error")
-    public ResponseEntity<?> errorPostMethod() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при POST запросе"));
-    }
-
-    //эмулируем ошибку на put запрос
-    @PutMapping("/error")
-    public ResponseEntity<?> errorPutMethod() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при PUT запросе"));
-    }
-
-    //эмулируем ошибку на delete запрос
-    @DeleteMapping("/error")
-    public ResponseEntity<?> errorDeleteMethod() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Ошибка при DELETE запросе"));
     }
 }
